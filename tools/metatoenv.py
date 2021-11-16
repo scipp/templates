@@ -179,12 +179,12 @@ def main(metafile, envfile, envname, channels, platform, extra, mergewith):
 
     # Write to output env file
     with open(envfile, "w") as out:
-        outf.write("##############################################################\n")
-        outf.write("# WARNING! This environment file was generated from the\n")
-        outf.write("# conda/meta.yaml file using the metatoenv.py tool.\n")
-        outf.write("# Do not update this file in-place.\n")
-        outf.write("# Use metatoenv.py to create a new file.\n")
-        outf.write("##############################################################\n\n")
+        out.write("##############################################################\n")
+        out.write("# WARNING! This environment file was generated from the\n")
+        out.write("# conda/meta.yaml file using the metatoenv.py tool.\n")
+        out.write("# Do not update this file in-place.\n")
+        out.write("# Use metatoenv.py to create a new file.\n")
+        out.write("##############################################################\n\n")
         out.write("name: {}\n".format(envname))
         out.write("channels:\n")
         for channel in channels:
