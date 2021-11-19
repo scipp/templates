@@ -112,7 +112,7 @@ def _jinja_filter(dependencies, platform):
                     ok = False
             if ok:
                 key = key.replace(selector, '').strip(' \n')
-        if ok and (key not in out):
+        if ok:
             out[key] = value
     return out
 
