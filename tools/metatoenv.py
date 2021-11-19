@@ -97,6 +97,7 @@ def _jinja_filter(dependencies, platform):
         if isinstance(value, dict):
             out[key] = _jinja_filter(value, platform)
         ok = True
+        key = key.split('#')[0].strip()
         if key.endswith(']'):
             left = key.rfind('[')
             if left == -1:
