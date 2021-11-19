@@ -96,24 +96,29 @@ def _jinja_filter(dependencies, platform):
     for key, value in dependencies.items():
         if isinstance(value, dict):
             out[key] = _jinja_filter(value, platform)
-        ok = True
-        key = key.split('#')[0].strip()
-        if key.endswith(']'):
-            left = key.rfind('[')
-            if left == -1:
-                raise RuntimeError("Unmatched square bracket in preprocessing selector")
-            selector = key[left:]
-            if selector.startswith('[not'):
-                if (platform in selector) or (selector.replace('[not', '')[:-1].strip()
-                                              in platform):
-                    ok = False
-            else:
-                if (platform not in selector) and (selector[1:-1] not in platform):
-                    ok = False
+        else:
+            ok = True
+            # Strip comments from key
+            key = key.split('#')[0].strip()
+            if key.count('[') > 0:
+                left = key.find('[')
+                right = key.find(']')
+                if key.count(']') != key.count('[') or right < left:
+                    raise RuntimeError("Bad preprocessing selector: "
+                                       "unmatched square brackets or closing bracket "
+                                       "found before opening bracket.")
+                selector = key[left:right + 1]
+                if selector.startswith('[not'):
+                    if (platform in selector) or (selector.replace(
+                            '[not', '')[:-1].strip() in platform):
+                        ok = False
+                else:
+                    if (platform not in selector) and (selector[1:-1] not in platform):
+                        ok = False
+                if ok:
+                    key = key.replace(selector, '').strip(' \n')
             if ok:
-                key = key.replace(selector, '').strip(' \n')
-        if ok:
-            out[key] = value
+                out[key] = value
     return out
 
 
