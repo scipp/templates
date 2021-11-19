@@ -106,7 +106,7 @@ def _jinja_filter(dependencies, platform):
                 if key.count(']') != key.count('[') or right < left:
                     raise RuntimeError("Bad preprocessing selector: "
                                        "unmatched square brackets or closing bracket "
-                                       "found before opening bracket.")
+                                       "found before opening bracket: {}".format(key))
                 selector = key[left:right + 1]
                 if selector.startswith('[not'):
                     if (platform in selector) or (selector.replace(
