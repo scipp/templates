@@ -8,6 +8,7 @@
 import os
 import argparse
 from functools import reduce
+import platform as _platform
 
 parser = argparse.ArgumentParser(
     description='Generate a conda environment file from a conda recipe meta.yaml file')
@@ -16,7 +17,7 @@ parser.add_argument('--meta-file', default='meta.yaml')
 parser.add_argument('--env-file', default='environment.yml')
 parser.add_argument('--env-name', '--name', default='')
 parser.add_argument('--channels', default='conda-forge')
-parser.add_argument('--platform', '--os', default='linux64')
+parser.add_argument('--platform', default=None)
 parser.add_argument('--extra', default='')
 parser.add_argument('--merge-with', default='')
 
@@ -151,6 +152,11 @@ def _write_dict(d, file_handle, indent):
 
 def main(metafile, envfile, envname, channels, platform, extra, mergewith):
 
+    # Find current platform
+    if platform is None:
+        platform_mapping = {"Linux": "linux", "Darwin": "osx", "Windows": "win"}
+        platform = platform_mapping[_platform.system()]
+
     # Read and parse metafile
     with open(metafile, "r") as f:
         metacontent = f.readlines()
@@ -213,6 +219,6 @@ if __name__ == '__main__':
          envfile=args.env_file,
          envname=args.env_name,
          channels=channels,
-         platform=args.platform.replace('-', ''),
+         platform=args.platform,
          extra=extra,
          mergewith=args.merge_with)
