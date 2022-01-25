@@ -77,7 +77,7 @@ def _parse_yaml(text):
     handle = out
     path = []
 
-    # Remove all empty lines and comments in text
+    # Remove all comments and empty lines in text
     clean_text = []
     for line in text:
         line = line.rstrip(' \n')
