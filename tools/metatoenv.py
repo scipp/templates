@@ -171,10 +171,11 @@ def _jinja_filter(dependencies, platform, pyversion):
                         ok = False
                 else:
                     # Check for platform
+                    is_not = raw_selector.startswith('not')
                     if platform in raw_selector:
-                        ok = not raw_selector.startswith('not')
+                        ok = not is_not
                     else:
-                        ok = raw_selector.startswith('not')
+                        ok = is_not
 
                 if ok:
                     key = key.replace(selector, '').strip(' \n')
