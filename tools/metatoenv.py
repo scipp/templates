@@ -157,7 +157,7 @@ def _jinja_filter(dependencies, platform, pyversion):
     out = {}
     for key, value in dependencies.items():
         if isinstance(value, dict):
-            out[key] = _jinja_filter(value, platform)
+            out[key] = _jinja_filter(value, platform, pyversion)
         else:
             ok = True
             if key.count('[') > 0:
