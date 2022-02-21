@@ -13,6 +13,7 @@ from functools import reduce
 import operator
 from packaging import version
 import platform as _platform
+import re
 import sys
 
 parser = argparse.ArgumentParser(
@@ -126,6 +127,17 @@ def _parse_yaml(text):
     return out
 
 
+def _parse_py_version(ver):
+    """
+    If the input version string has no '.' character, e.g. `38`, then change it to
+    `3.8`.
+    Return a version parsed through the `packaging.version` tool.
+    """
+    if (len(ver) > 1) and (ver.count('.') == 0):
+        ver = f'{ver[0]}.{ver[1:]}'
+    return version.parse(ver)
+
+
 def _jinja_filter(dependencies, platform, pyversion):
     """
     Filter out deps for requested platform via jinja syntax.
@@ -159,12 +171,8 @@ def _jinja_filter(dependencies, platform, pyversion):
                     # Check for python version
                     select_ver = re.split(r'<|>|\=', raw_selector)[-1]
                     select_op = re.search(r'(<|>|\=)+', raw_selector)[0]
-                    if select_ver.count('.') == 0:
-                        select_ver = f'{select_ver[0]}.{select_ver[1:]}'
-                    if pyversion.count('.') == 0:
-                        pyversion = f'{pyversion[0]}.{pyversion[1:]}'
-                    if not ops[select_op](version.parse(pyversion),
-                                          version.parse(select_ver)):
+                    if not ops[select_op](_parse_py_version(pyversion),
+                                          _parse_py_version(select_ver)):
                         ok = False
                 else:
                     # Check for platform
