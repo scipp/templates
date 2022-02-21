@@ -49,7 +49,7 @@ parser.add_argument('--extra',
                     '(use commas to separate multiple entries, e.g. '
                     '--extra=numpy,matplotlib,scipy)')
 parser.add_argument('--merge-with',
-                    default='',
+                    default=None,
                     help='a second environment file that is to be merged with the '
                     'one that would be created by the conda meta.yaml file alone')
 parser.add_argument('--py',
@@ -252,7 +252,7 @@ def main(metafile, envfile, envname, channels, platform, extra, mergewith, pyver
         [meta_dependencies, meta["requirements:"]["run:"], meta["test:"]["requires:"]])
 
     # Read file with additional dependencies
-    if len(mergewith) > 0:
+    if mergewith is not None:
         with open(mergewith, "r") as f:
             mergecontent = f.readlines()
         additional = _parse_yaml(mergecontent)
