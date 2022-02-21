@@ -133,7 +133,7 @@ def _parse_py_version(ver):
     `3.8`.
     Return a version parsed through the `packaging.version` tool.
     """
-    if (len(ver) > 1) and (ver.count('.') == 0):
+    if (len(ver) > 1) and '.' not in ver:
         ver = f'{ver[0]}.{ver[1:]}'
     return version.parse(ver)
 
