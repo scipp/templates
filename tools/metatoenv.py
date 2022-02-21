@@ -157,11 +157,8 @@ def _jinja_filter(dependencies, platform, pyversion):
 
                 if raw_selector.startswith('py'):
                     # Check for python version
-                    select_ver = raw_selector.replace('>',
-                                                      '=').replace('<',
-                                                                   '=').split('=')[-1]
-                    select_op = raw_selector.replace('py', '').replace(select_ver,
-                                                                       '').strip()
+                    select_ver = re.split(r'<|>|\=', raw_selector)[-1]
+                    select_op = re.search(r'(<|>|\=)+', raw_selector)[0]
                     if select_ver.count('.') == 0:
                         select_ver = f'{select_ver[0]}.{select_ver[1:]}'
                     if pyversion.count('.') == 0:
