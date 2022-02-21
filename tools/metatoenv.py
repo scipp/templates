@@ -127,10 +127,9 @@ def _parse_yaml(text):
     return out
 
 
-def _parse_py_version(ver, drop_minor, drop_micro):
+def _parse_py_version(ver, drop_micro):
     """
     Return a version parsed through the `packaging.version` tool.
-    If `drop_minor` is `True`, we drop the minor version (set it to 0).
     If `drop_micro` is `True`, we drop the micro version (set it to 0).
     """
     # If the input version string has has length 2 and no '.' character, e.g. `38`,
@@ -140,8 +139,6 @@ def _parse_py_version(ver, drop_minor, drop_micro):
     out = version.parse(ver)
     if drop_micro:
         out = version.parse(f'{out.major}.{out.minor}')
-    if drop_minor:
-        out = version.parse(f'{out.major}')
     return out
 
 
@@ -178,13 +175,9 @@ def _jinja_filter(dependencies, platform, pyversion):
                     # Check for python version
                     select_ver = re.split(r'<|>|\=', raw_selector)[-1]
                     select_op = re.search(r'(<|>|\=)+', raw_selector)[0]
-                    select_ver = _parse_py_version(select_ver,
-                                                   drop_minor=False,
-                                                   drop_micro=False)
+                    select_ver = _parse_py_version(select_ver, drop_micro=False)
                     if not ops[select_op](_parse_py_version(
-                            pyversion,
-                            drop_minor=select_ver.minor == 0,
-                            drop_micro=select_ver.micro == 0), select_ver):
+                            pyversion, drop_micro=select_ver.micro == 0), select_ver):
                         ok = False
                 else:
                     # Check for platform
