@@ -151,40 +151,30 @@ def _jinja_filter(dependencies, platform, pyversion):
                     raise RuntimeError("Bad preprocessing selector: "
                                        "unmatched square brackets or closing bracket "
                                        "found before opening bracket: {}".format(key))
-                selector = key[left:right + 1].replace('64', '').replace('32', '')
-                # Check for python version
+                selector = key[left:right + 1]
                 raw_selector = selector.lstrip('[ ').rstrip(' ]').replace(
-                    'python', 'py')
+                    'python', 'py').replace('64', '').replace('32', '')
+
                 if raw_selector.startswith('py'):
+                    # Check for python version
                     select_ver = raw_selector.replace('>',
                                                       '=').replace('<',
                                                                    '=').split('=')[-1]
                     select_op = raw_selector.replace('py', '').replace(select_ver,
                                                                        '').strip()
-                    print('select_ver', select_ver)
-                    print('select_op', select_op)
                     if select_ver.count('.') == 0:
                         select_ver = f'{select_ver[0]}.{select_ver[1:]}'
-                    print('select_ver2', select_ver)
                     if pyversion.count('.') == 0:
                         pyversion = f'{pyversion[0]}.{pyversion[1:]}'
                     if not ops[select_op](version.parse(pyversion),
                                           version.parse(select_ver)):
                         ok = False
-                    print(version.parse(pyversion), version.parse(select_ver))
-                    print(version.parse(pyversion) > version.parse(select_ver))
-
                 else:
                     # Check for platform
-                    if selector.startswith('[not'):
-                        # if (platform in selector) or (selector.replace(
-                        #         '[not', '')[:-1].strip() in platform):
-                        if platform in selector:
-                            ok = False
+                    if platform in raw_selector:
+                        ok = not raw_selector.startswith('not')
                     else:
-                        # if (platform not in selector) and (selector[1:-1] not in platform):
-                        if platform not in selector:
-                            ok = False
+                        ok = raw_selector.startswith('not')
 
                 if ok:
                     key = key.replace(selector, '').strip(' \n')
